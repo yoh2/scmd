@@ -44,6 +44,7 @@ impl ParamDef {
                 if s.contains(placeholder) {
                     return Err(Error::ParameterValueIsRequired);
                 }
+                extracted.push(to_cstring(s.as_bytes()))
             }
         }
         Ok(extracted)
