@@ -18,5 +18,7 @@ fn main() {
         eprintln!("opt:\n{opt:#?}\n");
     }
 
-    runner::run_command(&config, &opt).unwrap();
+    if let Err(e) = runner::run_command(&config, &opt) {
+        eprintln!("{e}");
+    }
 }

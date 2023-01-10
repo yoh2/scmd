@@ -8,6 +8,7 @@ use crate::{
 };
 use itertools::Itertools;
 use nix::unistd;
+use std::convert::Infallible;
 use std::{
     ffi::{CString, OsString},
     os::unix::ffi::OsStrExt,
@@ -25,8 +26,8 @@ pub enum Error {
     #[error("ambiguous parameter placement for `{0}`")]
     AmbiguousParameterPlacement(String),
 
-    #[error("argument extraction failed: {0}")]
-    ArgumentExtractionFailed(#[from] parameter::Error),
+    #[error("parameter `{0}`: argument extraction failed: {1}")]
+    ArgumentExtractionFailed(String, parameter::Error),
 
     #[error("execvp error: {0}")]
     ExecvpeFailed(#[from] nix::Error),
@@ -36,7 +37,7 @@ pub enum Error {
 /// # Panics
 ///
 /// Panics when opt.command is None
-pub fn run_command(config: &Config, opt: &Opt) -> Result<(), Error> {
+pub fn run_command(config: &Config, opt: &Opt) -> Result<Infallible, Error> {
     let command = opt.command.as_ref().expect("must be specified");
     let cmd_config = if let Some(cmd_config) = config.command.get(command) {
         Referable::Borrowed(cmd_config)
@@ -61,9 +62,7 @@ pub fn run_command(config: &Config, opt: &Opt) -> Result<(), Error> {
         eprintln!("running command: {args_str}");
     }
 
-    unistd::execvp(&args[0], &args)?;
-
-    Ok(())
+    unistd::execvp(&args[0], &args).map_err(|e| e.into())
 }
 
 fn compose_value<'a, T>(default: &'a T, cmd_val: &'a Option<T>, opt_val: &'a Option<T>) -> &'a T {
@@ -98,7 +97,9 @@ impl<'a> CommandComposer<'a> {
             &None,
         );
         let (param_def, args) = self.select_param_target(&param.name)?;
-        let extracted = param_def.extract_as_cstrings(placeholder, &param.value)?;
+        let extracted = param_def
+            .extract_as_cstrings(placeholder, &param.value)
+            .map_err(|e| Error::ArgumentExtractionFailed(param.name.clone(), e))?;
         args.extend_from_slice(&extracted);
         Ok(())
     }
