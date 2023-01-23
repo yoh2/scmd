@@ -14,6 +14,7 @@ use std::{
     convert::Infallible,
     ffi::{CString, OsString},
     os::unix::ffi::OsStrExt,
+    process::exit,
 };
 use thiserror::Error;
 
@@ -59,9 +60,14 @@ pub fn run_command(config: &Config, opt: &Opt) -> Result<Infallible, Error> {
     }
 
     let args = composer.exec_args(&opt.args);
-    if opt.debug {
+    if opt.debug || opt.verbose || opt.dry_run {
         let args_str = args.iter().map(|arg| format!("{arg:?}")).join(" ");
-        eprintln!("running command: {args_str}");
+        if opt.dry_run {
+            println!("{args_str}");
+            exit(0);
+        } else {
+            eprintln!("running command: {args_str}");
+        }
     }
 
     unistd::execvp(&args[0], &args).map_err(|e| e.into())

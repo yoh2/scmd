@@ -10,6 +10,14 @@ pub struct Opt {
     #[structopt(short = "d", long)]
     pub debug: bool,
 
+    /// Enable verbose output
+    #[structopt(short = "v", long)]
+    pub verbose: bool,
+
+    /// Instead of actually performing the command, displays what command would be executed.
+    #[structopt(long)]
+    pub dry_run: bool,
+
     /// Passthrough unknown command
     #[structopt(short = "p", long)]
     pub passthrough: Option<bool>,
