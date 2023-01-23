@@ -32,8 +32,8 @@ pub enum Error {
     #[error("parameter `{0}`: argument extraction failed: {1}")]
     ArgumentExtractionFailed(String, parameter::Error),
 
-    #[error("execvp error: {0}")]
-    ExecvpeFailed(#[from] nix::Error),
+    #[error("execvp error: {file}: {errno}")]
+    ExecvpeFailed { file: String, errno: nix::Error },
 }
 
 ///
@@ -70,7 +70,10 @@ pub fn run_command(config: &Config, opt: &Opt) -> Result<Infallible, Error> {
         }
     }
 
-    unistd::execvp(&args[0], &args).map_err(|e| e.into())
+    unistd::execvp(&args[0], &args).map_err(|errno| Error::ExecvpeFailed {
+        file: cmd_config.base.as_slice()[0].clone(),
+        errno,
+    })
 }
 
 fn compose_value<'a, T>(default: &'a T, cmd_val: &'a Option<T>, opt_val: &'a Option<T>) -> &'a T {
