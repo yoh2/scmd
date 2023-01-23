@@ -1,6 +1,8 @@
 use crate::{
     config::{
-        parameter::{self, ParamDef},
+        parameter::{
+            ParamDef, {self},
+        },
         CommandConfig, Config, DefaultConfig,
     },
     opt::{Opt, Parameter},
@@ -8,8 +10,8 @@ use crate::{
 };
 use itertools::Itertools;
 use nix::unistd;
-use std::convert::Infallible;
 use std::{
+    convert::Infallible,
     ffi::{CString, OsString},
     os::unix::ffi::OsStrExt,
 };

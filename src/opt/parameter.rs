@@ -1,5 +1,4 @@
-use std::convert::Infallible;
-use std::str::FromStr;
+use std::{convert::Infallible, str::FromStr};
 
 #[derive(Debug)]
 pub struct Parameter {
