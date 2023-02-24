@@ -18,11 +18,17 @@ pub struct Opt {
     #[structopt(long)]
     pub dry_run: bool,
 
+    /// Lists the argument definitions of the specified command,
+    /// or lists defined commands if no commands is specified.
+    #[structopt(short = "l", long)]
+    pub list: bool,
+
     /// Passthrough unknown command
     #[structopt(short = "p", long)]
     pub passthrough: Option<bool>,
 
     /// Command to be run
+    #[structopt(required_unless = "list")]
     pub command: Option<String>,
 
     /// Command parameters

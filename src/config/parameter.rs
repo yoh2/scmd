@@ -18,6 +18,10 @@ pub enum Error {
 pub struct ParamDef(SingleOrVec<String>);
 
 impl ParamDef {
+    pub fn strings(&self) -> &[String] {
+        self.0.as_slice()
+    }
+
     pub fn extract_as_cstrings(
         &self,
         placeholder: &str,
