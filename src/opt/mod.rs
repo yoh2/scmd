@@ -1,40 +1,41 @@
 mod parameter;
 
+use clap::Parser;
 pub use parameter::*;
 use std::ffi::OsString;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
+#[command(version)]
 pub struct Opt {
     /// Enable debug output
-    #[structopt(short = "d", long)]
+    #[arg(short, long)]
     pub debug: bool,
 
     /// Enable verbose output
-    #[structopt(short = "v", long)]
+    #[arg(short, long)]
     pub verbose: bool,
 
-    /// Instead of actually performing the command, displays what command would be executed.
-    #[structopt(long)]
+    /// Instead of actually performing the command, print what command would be executed.
+    #[arg(long)]
     pub dry_run: bool,
 
-    /// Lists the argument definitions of the specified command,
-    /// or lists defined commands if no commands is specified.
-    #[structopt(short = "l", long)]
+    /// List the argument definitions of the specified command,
+    /// or list defined commands if no commands is specified.
+    #[arg(short, long)]
     pub list: bool,
 
     /// Passthrough unknown command
-    #[structopt(short = "p", long)]
+    #[arg(short, long)]
     pub passthrough: Option<bool>,
 
     /// Command to be run
-    #[structopt(required_unless = "list")]
+    #[arg(required_unless_present = "list")]
     pub command: Option<String>,
 
     /// Command parameters
     pub parameters: Vec<Parameter>,
 
     /// Arguments that is passed to the program
-    #[structopt(last = true)]
+    #[arg(last = true)]
     pub args: Vec<OsString>,
 }

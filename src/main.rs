@@ -5,12 +5,12 @@ mod runner;
 mod util;
 
 use crate::config::{parameter::ParamConfigs, CommandConfigs};
+use clap::Parser;
 use config::Config;
 use itertools::Itertools;
 use opt::Opt;
 use runner::Error;
 use std::{collections::BTreeMap, process::exit};
-use structopt::StructOpt;
 use util::libc::{set_all_locale_by_env, strerror};
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
 
     let config =
         confy::load::<Config>(&app::app_name(), "config").expect("failed to read config file");
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     if opt.debug {
         eprintln!("config:\n{config:#?}\n");

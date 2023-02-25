@@ -1,6 +1,6 @@
 use std::{convert::Infallible, str::FromStr};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Parameter {
     pub name: String,
     pub value: Option<String>,
