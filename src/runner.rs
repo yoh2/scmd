@@ -1,11 +1,11 @@
 use crate::{
+    cli::{Cli, Parameter},
     config::{
         parameter::{
             ParamDef, {self},
         },
         CommandConfig, Config, DefaultConfig,
     },
-    opt::{Opt, Parameter},
     util::{cstring::to_cstring, value::Referable},
 };
 use itertools::Itertools;
@@ -39,15 +39,15 @@ pub enum Error {
 ///
 /// # Panics
 ///
-/// Panics when opt.command is None
-pub fn run_command(config: &Config, opt: &Opt) -> Result<Infallible, Error> {
-    let command = opt.command.as_ref().expect("must be specified");
+/// Panics when cli.command is None
+pub fn run_command(config: &Config, cli: &Cli) -> Result<Infallible, Error> {
+    let command = cli.command.as_ref().expect("must be specified");
     let cmd_config = if let Some(cmd_config) = config.command.get(command) {
         Referable::Borrowed(cmd_config)
     } else if *compose_value(
         &config.default.passthrough_unknown_command,
         &None,
-        &opt.passthrough,
+        &cli.passthrough,
     ) {
         Referable::Owned(CommandConfig::empty_for(command))
     } else {
@@ -55,14 +55,14 @@ pub fn run_command(config: &Config, opt: &Opt) -> Result<Infallible, Error> {
     };
 
     let mut composer = CommandComposer::new(&config.default, &cmd_config);
-    for param in &opt.parameters {
+    for param in &cli.parameters {
         composer.add_parameter(param)?;
     }
 
-    let args = composer.exec_args(&opt.args);
-    if opt.debug || opt.verbose || opt.dry_run {
+    let args = composer.exec_args(&cli.args);
+    if cli.debug || cli.verbose || cli.dry_run {
         let args_str = args.iter().map(|arg| format!("{arg:?}")).join(" ");
-        if opt.dry_run {
+        if cli.dry_run {
             println!("{args_str}");
             exit(0);
         } else {

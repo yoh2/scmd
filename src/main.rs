@@ -1,14 +1,14 @@
 mod app;
+mod cli;
 mod config;
-mod opt;
 mod runner;
 mod util;
 
 use crate::config::{parameter::ParamConfigs, CommandConfigs};
 use clap::Parser;
+use cli::Cli;
 use config::Config;
 use itertools::Itertools;
-use opt::Opt;
 use runner::Error;
 use std::{collections::BTreeMap, process::exit};
 use util::libc::{set_all_locale_by_env, strerror};
@@ -18,22 +18,22 @@ fn main() {
 
     let config =
         confy::load::<Config>(&app::app_name(), "config").expect("failed to read config file");
-    let opt = Opt::parse();
+    let cli = Cli::parse();
 
-    if opt.debug {
+    if cli.debug {
         eprintln!("config:\n{config:#?}\n");
-        eprintln!("opt:\n{opt:#?}\n");
+        eprintln!("cli:\n{cli:#?}\n");
     }
 
-    if opt.list {
-        if let Some(command) = &opt.command {
+    if cli.list {
+        if let Some(command) = &cli.command {
             print_command_detail_then_exit(&config, command);
         } else {
             list_commands_then_exit(&config.command);
         }
     }
 
-    if let Err(e) = runner::run_command(&config, &opt) {
+    if let Err(e) = runner::run_command(&config, &cli) {
         if let Error::ExecvpeFailed { file, errno } = e {
             eprintln!("{}: {}", file, strerror(errno));
         } else {

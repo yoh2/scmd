@@ -6,7 +6,7 @@ use std::ffi::OsString;
 
 #[derive(Debug, Parser)]
 #[command(version)]
-pub struct Opt {
+pub struct Cli {
     /// Enable debug output
     #[arg(short, long)]
     pub debug: bool,
