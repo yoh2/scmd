@@ -25,7 +25,7 @@ example-api = ['--insecure', 'http://example.com/path/to/api-base/{}']
 the command
 
 ```
-scmd curl json example-api=some/endpoint -- -d '{}' -o output.json
+scmd curl json example-api=some/endpoint -- -d '{"foo": "bar"}' -o output.json
 ```
 
 will expanded and executed as below.
