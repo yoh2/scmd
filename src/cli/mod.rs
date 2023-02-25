@@ -4,6 +4,7 @@ use clap::Parser;
 pub use parameter::*;
 use std::ffi::OsString;
 
+/// Run command with shorthand style command name and arguments
 #[derive(Debug, Parser)]
 #[command(version)]
 pub struct Cli {
