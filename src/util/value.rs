@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::ops::Deref;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum SingleOrVec<T> {
     Single(T),
