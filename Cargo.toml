@@ -10,8 +10,9 @@ authors = ["yoh2 <yoh2.sdj@gmail.com>"]
 clap = { version = "4.1.6", features = ["derive"] }
 confy = "0.5.1"
 directories = "4.0.1"
+indoc = "2.0.4"
 itertools = "0.10.5"
 nix = "0.26.1"
 serde = { version = "1.0.152", features = ["derive"] }
 thiserror = "1.0.38"
-toml = "0.5.10"
+toml = "0.8.8"
